@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Pulse — Settings</title>
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --surface: #ffffff;
+      --text: #1d1d1f;
+      --text-secondary: #6e6e73;
+      --border: #e5e5e7;
+      --accent: #007aff;
+      --danger: #ff3b30;
+      --success: #34c759;
+      --radius: 10px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+
+    .container { max-width: 700px; margin: 0 auto; }
+
+    h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .subtitle { color: var(--text-secondary); font-size: 14px; margin-bottom: 32px; }
+
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .section h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .section-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+
+    .field { margin-bottom: 16px; }
+    .field:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--text-secondary);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+    }
+
+    input:focus, textarea:focus { border-color: var(--accent); }
+
+    textarea { min-height: 80px; resize: vertical; font-family: monospace; font-size: 13px; }
+
+    .hint { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+
+    /* --- Resource list --- */
+    .resource-list {
+      list-style: none;
+      margin-bottom: 12px;
+    }
+
+    .resource-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 6px;
+      font-size: 13px;
+      background: var(--bg);
+    }
+
+    .resource-item .resource-url {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text);
+      font-family: monospace;
+      font-size: 12px;
+    }
+
+    .resource-item .resource-label {
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+      min-width: 80px;
+    }
+
+    .resource-item .resource-type {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .type-rss { background: #fff3cd; color: #856404; }
+    .type-html { background: #d1ecf1; color: #0c5460; }
+    .type-api { background: #d4edda; color: #155724; }
+
+    .btn-remove {
+      background: none;
+      border: none;
+      color: var(--danger);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .btn-remove:hover { background: rgba(255, 59, 48, 0.1); }
+
+    /* --- Add resource row --- */
+    .add-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .add-row input {
+      flex: 1;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-secondary { background: var(--border); color: var(--text); }
+    .btn-small { padding: 6px 12px; font-size: 12px; }
+
+    /* --- Toggle --- */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toggle-row:last-child { border-bottom: none; }
+    .toggle-row label { margin: 0; font-size: 14px; color: var(--text); }
+
+    .toggle { position: relative; width: 44px; height: 24px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+
+    .toggle-slider {
+      position: absolute; inset: 0;
+      background: var(--border); border-radius: 12px;
+      cursor: pointer; transition: background 0.2s;
+    }
+
+    .toggle-slider::before {
+      content: ''; position: absolute;
+      width: 18px; height: 18px; left: 3px; top: 3px;
+      background: white; border-radius: 50%;
+      transition: transform 0.2s;
+    }
+
+    .toggle input:checked + .toggle-slider { background: var(--accent); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+    /* --- Number input row --- */
+    .number-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .number-row:last-child { border-bottom: none; }
+    .number-row label { margin: 0; font-size: 14px; color: var(--text); flex: 1; }
+
+    .number-row input[type="number"] {
+      width: 70px;
+      text-align: center;
+      padding: 6px 8px;
+    }
+
+    .btn-row { display: flex; gap: 10px; margin-top: 24px; }
+
+    .status {
+      font-size: 13px; color: var(--success); margin-top: 12px;
+      display: none; font-weight: 500;
+    }
+
+    .status.visible { display: block; }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+    select {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>AI Pulse Settings</h1>
+    <p class="subtitle">Configure your sources, keywords, and display preferences.</p>
+
+    <!-- ===================== GITHUB ===================== -->
+    <div class="section">
+      <h2>GitHub</h2>
+      <p class="section-desc">Search trending AI/ML repos by topic. One API call per topic.</p>
+
+      <div class="toggle-row">
+        <label for="src-github">Enable GitHub source</label>
+        <div class="toggle">
+          <input type="checkbox" id="src-github" checked>
+          <span class="toggle-slider"></span>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <label>Topics to search</label>
+      <ul class="resource-list" id="github-topics-list"></ul>
+      <div class="add-row">
+        <input type="text" id="github-topic-input" placeholder="e.g. mcp, fine-tuning, mlops">
+        <button class="btn btn-secondary btn-small" id="github-topic-add">+ Add</button>
+      </div>
+      <p class="hint">Each topic becomes a separate GitHub Search API call: topic:&lt;name&gt;</p>
+
+      <hr class="divider">
+
+      <div class="field">
+        <label for="github-token">Personal Access Token (optional)</label>
+        <input type="text" id="github-token" placeholder="ghp_xxxxxxxxxxxx">
+        <p class="hint">Increases API rate limit from 10 to 30 req/min. Create at github.com/settings/tokens</p>
+      </div>
+
+      <div class="number-row">
+        <label for="github-max">Max results to show</label>
+        <input type="number" id="github-max" value="40" min="1" max="100">
+      </div>
+    </div>
+
+    <!-- ===================== ANTHROPIC ===================== -->
+    <div class="section">
+      <h2>Anthropic & Claude</h2>
+      <p class="section-desc">Scrapes blogs, news, engineering, and research pages.</p>
+
+      <div class="toggle-row">
+        <label for="src-anthropic">Enable Anthropic source</label>
+        <div class="toggle">
+          <input type="checkbox" id="src-anthropic" checked>
+          <span class="toggle-slider"></span>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <label>URLs to scrape / RSS feeds</label>
+      <ul class="resource-list" id="anthropic-urls-list"></ul>
+      <div class="add-row">
+        <select id="anthropic-type-input">
+          <option value="html">HTML</option>
+          <option value="rss">RSS</option>
+        </select>
+        <input type="text" id="anthropic-url-input" placeholder="https://...">
+        <button class="btn btn-secondary btn-small" id="anthropic-url-add">+ Add</button>
+      </div>
+      <p class="hint">HTML pages are scraped for links. RSS/XML feeds are parsed for items.</p>
+
+      <div class="number-row">
+        <label for="anthropic-max">Max results to show</label>
+        <input type="number" id="anthropic-max" value="3" min="1" max="20">
+      </div>
+    </div>
+
+    <!-- ===================== OPENAI ===================== -->
+    <div class="section">
+      <h2>OpenAI & Codex</h2>
+      <p class="section-desc">Fetches blog RSS, Codex changelog, and developer updates.</p>
+
+      <div class="toggle-row">
+        <label for="src-openai">Enable OpenAI source</label>
+        <div class="toggle">
+          <input type="checkbox" id="src-openai" checked>
+          <span class="toggle-slider"></span>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <label>URLs to scrape / RSS feeds</label>
+      <ul class="resource-list" id="openai-urls-list"></ul>
+      <div class="add-row">
+        <select id="openai-type-input">
+          <option value="rss">RSS</option>
+          <option value="html">HTML</option>
+        </select>
+        <input type="text" id="openai-url-input" placeholder="https://...">
+        <button class="btn btn-secondary btn-small" id="openai-url-add">+ Add</button>
+      </div>
+
+      <div class="number-row">
+        <label for="openai-max">Max results to show</label>
+        <input type="number" id="openai-max" value="3" min="1" max="20">
+      </div>
+    </div>
+
+    <!-- ===================== HACKER NEWS ===================== -->
+    <div class="section">
+      <h2>Hacker News</h2>
+      <p class="section-desc">Filters top stories by AI/ML keywords in the title.</p>
+
+      <div class="toggle-row">
+        <label for="src-hackernews">Enable Hacker News source</label>
+        <div class="toggle">
+          <input type="checkbox" id="src-hackernews" checked>
+          <span class="toggle-slider"></span>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="field">
+        <label for="hn-keywords">AI/ML keywords (one per line)</label>
+        <textarea id="hn-keywords" rows="8" placeholder="ai&#10;llm&#10;gpt&#10;claude&#10;..."></textarea>
+        <p class="hint">Stories matching any of these keywords are included. Leave empty for defaults.</p>
+      </div>
+
+      <div class="number-row">
+        <label for="hn-top-popular">Top N by popularity first</label>
+        <input type="number" id="hn-top-popular" value="20" min="1" max="100">
+      </div>
+      <div class="number-row">
+        <label for="hn-max">Then top N by recency to show</label>
+        <input type="number" id="hn-max" value="3" min="1" max="50">
+      </div>
+    </div>
+
+    <!-- ===================== CUSTOM RSS ===================== -->
+    <div class="section">
+      <h2>Custom RSS Feeds</h2>
+      <p class="section-desc">Add any RSS/Atom feed — AI newsletters, other blogs, subreddits, etc.</p>
+
+      <ul class="resource-list" id="custom-rss-list"></ul>
+      <div class="add-row">
+        <input type="text" id="custom-rss-input" placeholder="https://example.com/feed.xml">
+        <button class="btn btn-secondary btn-small" id="custom-rss-add">+ Add</button>
+      </div>
+      <p class="hint">These feeds appear under a "Custom" tab in the dashboard.</p>
+    </div>
+
+    <!-- ===================== GENERAL ===================== -->
+    <div class="section">
+      <h2>General</h2>
+
+      <div class="toggle-row">
+        <label for="notifications-enabled">Desktop notifications for high-signal items</label>
+        <div class="toggle">
+          <input type="checkbox" id="notifications-enabled" checked>
+          <span class="toggle-slider"></span>
+        </div>
+      </div>
+
+      <div class="number-row">
+        <label for="retention-days">Keep items for (days)</label>
+        <input type="number" id="retention-days" value="30" min="1" max="365">
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="saveBtn">Save Settings</button>
+    </div>
+    <p class="status" id="status">Settings saved!</p>
+  </div>
+
+  <script src="../lib/db.js"></script>
+  <script src="../lib/keywords.js"></script>
+  <script>
+    // ========== Default resource configurations ==========
+
+    const DEFAULT_GITHUB_TOPICS = [
+      'llm', 'generative-ai', 'machine-learning', 'deep-learning',
+      'ai-agents', 'transformers', 'rag', 'large-language-models'
+    ];
+
+    const DEFAULT_ANTHROPIC_URLS = [
+      { url: 'https://www.anthropic.com/news', type: 'html', label: 'Anthropic News' },
+      { url: 'https://claude.com/blog', type: 'html', label: 'Claude Blog' },
+      { url: 'https://www.anthropic.com/engineering', type: 'html', label: 'Engineering' },
+      { url: 'https://www.anthropic.com/research', type: 'html', label: 'Research' },
+      { url: 'https://raw.githubusercontent.com/taobojlen/anthropic-rss-feed/main/anthropic_news_rss.xml', type: 'rss', label: 'News RSS' },
+      { url: 'https://raw.githubusercontent.com/conoro/anthropic-engineering-rss-feed/main/anthropic_engineering_rss.xml', type: 'rss', label: 'Eng RSS' }
+    ];
+
+    const DEFAULT_OPENAI_URLS = [
+      { url: 'https://openai.com/news/rss.xml', type: 'rss', label: 'OpenAI News' },
+      { url: 'https://developers.openai.com/codex/changelog/rss.xml', type: 'rss', label: 'Codex Changelog' },
+      { url: 'https://developers.openai.com/changelog/', type: 'html', label: 'Dev Changelog' },
+      { url: 'https://openai.com/news/', type: 'html', label: 'News Page' }
+    ];
+
+    // ========== State ==========
+
+    let githubTopics = [];
+    let anthropicUrls = [];
+    let openaiUrls = [];
+    let customRssFeeds = [];
+
+    // ========== Load ==========
+
+    async function loadSettings() {
+      // Simple settings
+      const simpleFields = {
+        sources_github: { id: 'src-github', type: 'checkbox', def: true },
+        sources_anthropic: { id: 'src-anthropic', type: 'checkbox', def: true },
+        sources_openai: { id: 'src-openai', type: 'checkbox', def: true },
+        sources_hackernews: { id: 'src-hackernews', type: 'checkbox', def: true },
+        github_token: { id: 'github-token', type: 'text', def: '' },
+        hn_keywords: { id: 'hn-keywords', type: 'text', def: '' },
+        notifications_enabled: { id: 'notifications-enabled', type: 'checkbox', def: true },
+        retention_days: { id: 'retention-days', type: 'number', def: 30 },
+        github_max: { id: 'github-max', type: 'number', def: 40 },
+        anthropic_max: { id: 'anthropic-max', type: 'number', def: 3 },
+        openai_max: { id: 'openai-max', type: 'number', def: 3 },
+        hn_top_popular: { id: 'hn-top-popular', type: 'number', def: 20 },
+        hn_max: { id: 'hn-max', type: 'number', def: 3 }
+      };
+
+      for (const [key, config] of Object.entries(simpleFields)) {
+        const val = await AIPulseDB.getSetting(key, config.def);
+        const el = document.getElementById(config.id);
+        if (!el) continue;
+        if (config.type === 'checkbox') el.checked = val;
+        else el.value = val;
+      }
+
+      // Resource lists
+      githubTopics = await AIPulseDB.getSetting('github_topics', DEFAULT_GITHUB_TOPICS);
+      anthropicUrls = await AIPulseDB.getSetting('anthropic_urls', DEFAULT_ANTHROPIC_URLS);
+      openaiUrls = await AIPulseDB.getSetting('openai_urls', DEFAULT_OPENAI_URLS);
+      customRssFeeds = await AIPulseDB.getSetting('custom_rss_feeds', []);
+
+      renderList('github-topics-list', githubTopics, 'topic');
+      renderList('anthropic-urls-list', anthropicUrls, 'url');
+      renderList('openai-urls-list', openaiUrls, 'url');
+      renderList('custom-rss-list', customRssFeeds, 'url');
+    }
+
+    // ========== Save ==========
+
+    async function saveSettings() {
+      const simpleFields = {
+        sources_github: { id: 'src-github', type: 'checkbox' },
+        sources_anthropic: { id: 'src-anthropic', type: 'checkbox' },
+        sources_openai: { id: 'src-openai', type: 'checkbox' },
+        sources_hackernews: { id: 'src-hackernews', type: 'checkbox' },
+        github_token: { id: 'github-token', type: 'text' },
+        hn_keywords: { id: 'hn-keywords', type: 'text' },
+        notifications_enabled: { id: 'notifications-enabled', type: 'checkbox' },
+        retention_days: { id: 'retention-days', type: 'number' },
+        github_max: { id: 'github-max', type: 'number' },
+        anthropic_max: { id: 'anthropic-max', type: 'number' },
+        openai_max: { id: 'openai-max', type: 'number' },
+        hn_top_popular: { id: 'hn-top-popular', type: 'number' },
+        hn_max: { id: 'hn-max', type: 'number' }
+      };
+
+      for (const [key, config] of Object.entries(simpleFields)) {
+        const el = document.getElementById(config.id);
+        if (!el) continue;
+        const val = config.type === 'checkbox' ? el.checked :
+                    config.type === 'number' ? parseInt(el.value, 10) :
+                    el.value;
+        await AIPulseDB.setSetting(key, val);
+      }
+
+      // Resource lists
+      await AIPulseDB.setSetting('github_topics', githubTopics);
+      await AIPulseDB.setSetting('anthropic_urls', anthropicUrls);
+      await AIPulseDB.setSetting('openai_urls', openaiUrls);
+      await AIPulseDB.setSetting('custom_rss_feeds', customRssFeeds);
+
+      const status = document.getElementById('status');
+      status.classList.add('visible');
+      setTimeout(() => status.classList.remove('visible'), 2500);
+    }
+
+    // ========== Render resource lists ==========
+
+    function renderList(listId, items, mode) {
+      const ul = document.getElementById(listId);
+      ul.innerHTML = '';
+
+      items.forEach((item, idx) => {
+        const li = document.createElement('li');
+        li.className = 'resource-item';
+
+        if (mode === 'topic') {
+          li.innerHTML = `
+            <span class="resource-type type-api">API</span>
+            <span class="resource-url">topic:${escapeHTML(item)}</span>
+            <button class="btn-remove" data-idx="${idx}" data-list="${listId}">×</button>
+          `;
+        } else {
+          const obj = typeof item === 'string' ? { url: item, type: 'rss', label: '' } : item;
+          const typeClass = obj.type === 'rss' ? 'type-rss' : 'type-html';
+          li.innerHTML = `
+            ${obj.label ? `<span class="resource-label">${escapeHTML(obj.label)}</span>` : ''}
+            <span class="resource-type ${typeClass}">${obj.type.toUpperCase()}</span>
+            <span class="resource-url" title="${escapeHTML(obj.url)}">${escapeHTML(obj.url)}</span>
+            <button class="btn-remove" data-idx="${idx}" data-list="${listId}">×</button>
+          `;
+        }
+
+        ul.appendChild(li);
+      });
+
+      // Bind remove buttons
+      ul.querySelectorAll('.btn-remove').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = parseInt(btn.dataset.idx, 10);
+          removeFromList(btn.dataset.list, idx);
+        });
+      });
+    }
+
+    function removeFromList(listId, idx) {
+      if (listId === 'github-topics-list') {
+        githubTopics.splice(idx, 1);
+        renderList(listId, githubTopics, 'topic');
+      } else if (listId === 'anthropic-urls-list') {
+        anthropicUrls.splice(idx, 1);
+        renderList(listId, anthropicUrls, 'url');
+      } else if (listId === 'openai-urls-list') {
+        openaiUrls.splice(idx, 1);
+        renderList(listId, openaiUrls, 'url');
+      } else if (listId === 'custom-rss-list') {
+        customRssFeeds.splice(idx, 1);
+        renderList(listId, customRssFeeds, 'url');
+      }
+    }
+
+    // ========== Add resource handlers ==========
+
+    // GitHub topics
+    document.getElementById('github-topic-add').addEventListener('click', () => {
+      const input = document.getElementById('github-topic-input');
+      const val = input.value.trim().toLowerCase().replace(/\s+/g, '-');
+      if (val && !githubTopics.includes(val)) {
+        githubTopics.push(val);
+        renderList('github-topics-list', githubTopics, 'topic');
+        input.value = '';
+      }
+    });
+
+    // Anthropic URLs
+    document.getElementById('anthropic-url-add').addEventListener('click', () => {
+      const urlInput = document.getElementById('anthropic-url-input');
+      const typeInput = document.getElementById('anthropic-type-input');
+      const url = urlInput.value.trim();
+      if (url && !anthropicUrls.some(u => u.url === url)) {
+        // Auto-detect label from URL
+        const label = url.replace(/https?:\/\//, '').split('/').slice(0, 2).join('/');
+        anthropicUrls.push({ url, type: typeInput.value, label });
+        renderList('anthropic-urls-list', anthropicUrls, 'url');
+        urlInput.value = '';
+      }
+    });
+
+    // OpenAI URLs
+    document.getElementById('openai-url-add').addEventListener('click', () => {
+      const urlInput = document.getElementById('openai-url-input');
+      const typeInput = document.getElementById('openai-type-input');
+      const url = urlInput.value.trim();
+      if (url && !openaiUrls.some(u => u.url === url)) {
+        const label = url.replace(/https?:\/\//, '').split('/').slice(0, 2).join('/');
+        openaiUrls.push({ url, type: typeInput.value, label });
+        renderList('openai-urls-list', openaiUrls, 'url');
+        urlInput.value = '';
+      }
+    });
+
+    // Custom RSS
+    document.getElementById('custom-rss-add').addEventListener('click', () => {
+      const input = document.getElementById('custom-rss-input');
+      const url = input.value.trim();
+      if (url && !customRssFeeds.some(u => (typeof u === 'string' ? u : u.url) === url)) {
+        const label = url.replace(/https?:\/\//, '').split('/')[0];
+        customRssFeeds.push({ url, type: 'rss', label });
+        renderList('custom-rss-list', customRssFeeds, 'url');
+        input.value = '';
+      }
+    });
+
+    // Allow Enter key to add
+    ['github-topic-input', 'anthropic-url-input', 'openai-url-input', 'custom-rss-input'].forEach(id => {
+      document.getElementById(id).addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const addBtnId = id.replace('-input', '-add');
+          document.getElementById(addBtnId).click();
+        }
+      });
+    });
+
+    // ========== Utilities ==========
+
+    function escapeHTML(str) {
+      const div = document.createElement('div');
+      div.textContent = str || '';
+      return div.innerHTML;
+    }
+
+    // ========== Init ==========
+
+    document.getElementById('saveBtn').addEventListener('click', saveSettings);
+    loadSettings();
+  </script>
+</body>
+</html>
