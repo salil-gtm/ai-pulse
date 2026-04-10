@@ -2,6 +2,10 @@
 
 A Firefox new-tab extension that aggregates AI/ML content into a single dashboard.
 
+## Demo
+
+https://youtu.be/ghECyLx3EIQ
+
 ## Sources
 
 - **GitHub** — Top trending AI/ML repos by velocity (stars/day), searched across configurable topic categories (llm, generative-ai, transformers, etc.) with a 4-day rolling window. Top 3 per topic, final top 5 by velocity.
