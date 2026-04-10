@@ -1,4 +1,4 @@
-# AI Pulse
+# ⚡ AI Pulse
 
 A Firefox new-tab extension that aggregates AI/ML content into a single dashboard.
 
