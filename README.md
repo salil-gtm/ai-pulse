@@ -23,7 +23,7 @@ A Firefox new-tab extension that aggregates AI/ML content into a single dashboar
 - Optional GitHub PAT support for higher API rate limits
 - All data stored locally in IndexedDB — no external accounts, no tracking
 
-## Install (development)
+## Install
 
 1. Clone this repo
 2. Open Firefox and go to `about:debugging#/runtime/this-firefox`
@@ -31,9 +31,6 @@ A Firefox new-tab extension that aggregates AI/ML content into a single dashboar
 4. Select `manifest.json` from the cloned folder
 5. Open a new tab
 
-## Install (Firefox Add-ons)
-
-Coming soon — pending AMO review. Source: [github.com/salil-gtm/ai-pulse](https://github.com/salil-gtm/ai-pulse)
 
 ## Configuration
 
