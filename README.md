@@ -2,6 +2,8 @@
 
 A Firefox new-tab extension that aggregates AI/ML content into a single dashboard.
 
+<img width="1121" height="965" alt="Screenshot 2026-04-11 at 11 16 35 AM" src="https://github.com/user-attachments/assets/e8ef1b48-c540-4766-b15e-8014c188019d" />
+
 ## Demo
 
 https://youtu.be/ghECyLx3EIQ
